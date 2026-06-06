@@ -3,126 +3,532 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Sküp</title>
-
+  <title>Sküp — Actually Meet People</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --green: #22C55E;
+      --green-dim: rgba(34, 197, 94, 0.12);
+      --green-glow: rgba(34, 197, 94, 0.35);
+      --bg: #0B0D10;
+      --surface: #13161C;
+      --border: rgba(255,255,255,0.07);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.5);
+      --muted-dim: rgba(255,255,255,0.28);
     }
 
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      background: #0F1115;
-      color: white;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
       min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── Ambient glow orbs ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 {
+      width: 340px; height: 340px;
+      background: radial-gradient(circle, rgba(34,197,94,0.13) 0%, transparent 70%);
+      top: -80px; right: -80px;
+      animation: orbFloat1 8s ease-in-out infinite;
+    }
+    .orb-2 {
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%);
+      bottom: 10%; left: -60px;
+      animation: orbFloat2 10s ease-in-out infinite;
+    }
+    @keyframes orbFloat1 {
+      0%, 100% { transform: translate(0,0); }
+      50% { transform: translate(-20px, 30px); }
+    }
+    @keyframes orbFloat2 {
+      0%, 100% { transform: translate(0,0); }
+      50% { transform: translate(15px, -25px); }
+    }
+
+    /* ── Main layout ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 48px;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    /* ── Logo ── */
+    .logo-wrap {
+      position: relative;
+      margin-bottom: 28px;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+    .logo {
+      width: 88px;
+      height: 88px;
+      border-radius: 26px;
+      object-fit: cover;
+      display: block;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.5), 0 0 60px rgba(34,197,94,0.15);
+    }
+    .logo-pulse {
+      position: absolute;
+      inset: -6px;
+      border-radius: 32px;
+      border: 1.5px solid rgba(34,197,94,0.25);
+      animation: pulseBorder 2.4s ease-in-out infinite;
+    }
+    @keyframes pulseBorder {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 0; transform: scale(1.1); }
+    }
+
+    /* ── Live badge ── */
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.22);
+      border-radius: 100px;
+      padding: 5px 12px 5px 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--green);
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards 0.25s;
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ── Headline ── */
+    .headline {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      text-align: center;
+      margin-bottom: 16px;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.6s ease forwards 0.35s;
+    }
+    .headline em {
+      font-style: normal;
+      color: var(--green);
+    }
+
+    /* ── Sub ── */
+    .sub {
+      font-size: 15.5px;
+      line-height: 1.55;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 32px;
+      max-width: 320px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.6s ease forwards 0.48s;
+    }
+
+    /* ── Pills / proof ── */
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards 0.6s;
+    }
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 13px;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.65);
+      font-weight: 400;
+    }
+    .pill-icon { font-size: 13px; }
+
+    /* ── How it works ── */
+    .steps {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px 20px;
+      margin-bottom: 32px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.6s ease forwards 0.7s;
+    }
+    .steps-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 16px;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      margin-bottom: 14px;
+    }
+    .step:last-child { margin-bottom: 0; }
+    .step-num {
+      flex-shrink: 0;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.2);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-text {
+      padding-top: 4px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.4;
+    }
+    .step-text strong {
+      color: white;
+      font-weight: 600;
+    }
+
+    /* ── CTA buttons ── */
+    .cta-block {
+      width: 100%;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.6s ease forwards 0.85s;
+    }
+    .cta-label {
+      font-size: 12px;
+      color: var(--muted-dim);
+      text-align: center;
+      margin-bottom: 14px;
+      letter-spacing: 0.02em;
+    }
+    .btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      gap: 10px;
+      width: 100%;
+      text-decoration: none;
+      padding: 17px 20px;
+      border-radius: 18px;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      cursor: pointer;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .btn:hover::after { opacity: 1; }
+    .btn:active { transform: scale(0.975) !important; }
+
+    .btn-android {
+      background: linear-gradient(135deg, #22C55E 0%, #16a34a 100%);
+      color: #000;
+      box-shadow: 0 4px 24px rgba(34,197,94,0.35), 0 1px 0 rgba(255,255,255,0.15) inset;
+    }
+    .btn-android:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(34,197,94,0.5), 0 1px 0 rgba(255,255,255,0.15) inset;
     }
 
-    .container {
+    .btn-ios {
+      background: var(--surface);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .btn-ios:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.18);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+
+    .btn-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+    .btn-text { display: flex; flex-direction: column; align-items: flex-start; }
+    .btn-text-sub { font-size: 11px; font-weight: 400; font-family: 'DM Sans', sans-serif; opacity: 0.7; letter-spacing: 0; }
+    .btn-text-main { font-size: 16px; line-height: 1.1; }
+
+    /* ── Tap nudge ── */
+    .nudge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted-dim);
+      margin-top: 4px;
+      margin-bottom: 28px;
+    }
+    .nudge-arrow {
+      display: inline-block;
+      animation: bounceDown 1.4s ease-in-out infinite;
+      font-size: 14px;
+    }
+    @keyframes bounceDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+
+    /* ── Quote ── */
+    .quote {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--green);
+      border-radius: 16px;
+      padding: 18px 20px;
       width: 100%;
-      max-width: 420px;
+      margin-bottom: 28px;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.5s ease forwards 1s;
+    }
+    .quote-text {
+      font-size: 14px;
+      font-style: italic;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    .quote-author {
+      font-size: 12px;
+      color: var(--green);
+      font-weight: 500;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: auto;
+      padding-top: 20px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.2);
       text-align: center;
     }
 
-    .logo {
-      width: 92px;
-      height: 92px;
-      border-radius: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 0 30px rgba(34, 197, 94, 0.18);
-      object-fit: cover;
+    /* ── Shared keyframes ── */
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    h1 {
-      font-size: 42px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      letter-spacing: -1px;
+    /* ── Tap ripple ── */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      transform: scale(0);
+      animation: rippleOut 0.5s linear;
+      pointer-events: none;
     }
-
-    p {
-      color: rgba(255,255,255,0.68);
-      font-size: 16px;
-      line-height: 1.5;
-      margin-bottom: 42px;
-    }
-
-    .button {
-      display: block;
-      width: 100%;
-      text-decoration: none;
-      padding: 18px 20px;
-      margin-bottom: 18px;
-      border-radius: 18px;
-      font-size: 17px;
-      font-weight: 600;
-      transition: all 0.18s ease;
-    }
-
-    .button:hover {
-      transform: scale(1.02);
-    }
-
-    .android {
-      background: #22C55E;
-      color: black;
-    }
-
-    .ios {
-      background: #1A1D24;
-      color: white;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .footer {
-      margin-top: 28px;
-      color: rgba(255,255,255,0.35);
-      font-size: 13px;
+    @keyframes rippleOut {
+      to { transform: scale(4); opacity: 0; }
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
 
-    <img
-      class="logo"
-      src="logo.png"
-      alt="Sküp Logo"
-    />
+  <div class="page">
 
-    <h1>Sküp</h1>
-
-    <p>
-      Meet new people without the pressure.
-    </p>
-
-    <a
-      class="button android"
-      href="https://play.google.com/store/apps/details?id=com.aflowt.skup"
-      target="_blank"
-    >
-      Download for Android
-    </a>
-
-    <a
-      class="button ios"
-      href="https://apps.apple.com/in/app/skúp/id6762100151"
-      target="_blank"
-    >
-      Download for iPhone
-    </a>
-
-    <div class="footer">
-      © Sküp
+    <div class="logo-wrap">
+      <img class="logo" src="logo.png" alt="Sküp" />
+      <div class="logo-pulse"></div>
     </div>
 
+    <div class="live-badge">
+      <span class="live-dot"></span>
+      People online right now
+    </div>
+
+    <h1 class="headline">
+      Stop lurking.<br>
+      <em>Actually</em> meet people.
+    </h1>
+
+    <p class="sub">
+      Drop a card. Someone real replies. No followers, no likes — just a conversation that could change everything.
+    </p>
+
+    <div class="pills">
+      <div class="pill"><span class="pill-icon">⚡</span> Cards vanish in 24h</div>
+      <div class="pill"><span class="pill-icon">🔒</span> No fake profiles</div>
+      <div class="pill"><span class="pill-icon">✨</span> No algorithm</div>
+    </div>
+
+    <div class="steps">
+      <div class="steps-label">How it works</div>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Post a card</strong> — a thought, a question, anything. It stays up for 24 hours.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Someone replies.</strong> But only if they've posted too — no lurkers allowed.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Vibe? Keep the chat.</strong> Reveal yourselves and actually become friends.</div>
+      </div>
+    </div>
+
+    <div class="nudge">
+      <span class="nudge-arrow">↓</span>
+      Free to download, takes 30 seconds
+    </div>
+
+    <div class="cta-block">
+      <div class="cta-label">Available on both stores</div>
+
+      <a class="btn btn-android" href="https://play.google.com/store/apps/details?id=com.aflowt.skup" target="_blank" id="btn-android">
+        <span class="btn-icon">🤖</span>
+        <span class="btn-text">
+          <span class="btn-text-sub">Get it on</span>
+          <span class="btn-text-main">Google Play</span>
+        </span>
+      </a>
+
+      <a class="btn btn-ios" href="https://apps.apple.com/in/app/skúp/id6762100151" target="_blank" id="btn-ios">
+        <span class="btn-icon"></span>
+        <span class="btn-text">
+          <span class="btn-text-sub">Download on the</span>
+          <span class="btn-text-main">App Store</span>
+        </span>
+      </a>
+    </div>
+
+    <div class="quote">
+      <div class="quote-text">"I've been on Instagram for 6 years and never actually made a friend from it. Posted my first card on Sküp and had a 2 hour conversation the same night."</div>
+      <div class="quote-author">— Early user, Mumbai</div>
+    </div>
+
+    <div class="footer">© Sküp · Built for real ones</div>
+
   </div>
+
+  <script>
+    // Ripple effect on buttons
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px`;
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+      });
+    });
+
+    // Smart platform detection — highlight the right button
+    const ua = navigator.userAgent.toLowerCase();
+    const isIOS = /iphone|ipad|ipod/.test(ua);
+    const isAndroid = /android/.test(ua);
+
+    if (isIOS) {
+      const iosBtn = document.getElementById('btn-ios');
+      iosBtn.style.background = 'linear-gradient(135deg, #1c1f28 0%, #252933 100%)';
+      iosBtn.style.borderColor = 'rgba(255,255,255,0.2)';
+      // Move iOS btn to top
+      iosBtn.parentNode.insertBefore(iosBtn, document.getElementById('btn-android'));
+    } else if (isAndroid) {
+      // Android is already first, just add a subtle pulse
+      const androidBtn = document.getElementById('btn-android');
+      androidBtn.style.animation = 'androidPulse 2.5s ease-in-out infinite';
+    }
+
+    // Inject android pulse keyframe dynamically
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes androidPulse {
+        0%, 100% { box-shadow: 0 4px 24px rgba(34,197,94,0.35); }
+        50% { box-shadow: 0 4px 36px rgba(34,197,94,0.6); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Scroll-triggered subtle parallax on orbs (perf-safe)
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          document.querySelector('.orb-1').style.transform = `translate(${-y * 0.04}px, ${y * 0.06}px)`;
+          document.querySelector('.orb-2').style.transform = `translate(${y * 0.03}px, ${-y * 0.05}px)`;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  </script>
 </body>
 </html>
