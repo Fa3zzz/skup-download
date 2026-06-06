@@ -28,12 +28,10 @@
       overflow-x: hidden;
     }
 
-    /* scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: #1f2a1f; border-radius: 4px; }
 
-    /* ── background mesh ── */
     .bg-mesh {
       position: fixed;
       inset: 0;
@@ -66,7 +64,6 @@
       to   { transform: translate(30px,-40px) scale(1.1); }
     }
 
-    /* ── grid lines decoration ── */
     .grid-lines {
       position: fixed;
       inset: 0;
@@ -79,7 +76,6 @@
       mask-image: radial-gradient(ellipse 80% 80% at 50% 0%, black 20%, transparent 100%);
     }
 
-    /* ── page shell ── */
     .page {
       position: relative;
       z-index: 1;
@@ -88,7 +84,6 @@
       padding: 0 22px 60px;
     }
 
-    /* ── top bar ── */
     .topbar {
       display: flex;
       justify-content: center;
@@ -172,10 +167,10 @@
       opacity: 0;
       animation: up 0.6s ease forwards 0.35s;
     }
+    /* Changed: solid green fill instead of outline stroke for legibility */
     h1 .line2 {
       display: block;
-      -webkit-text-stroke: 1.5px var(--g);
-      color: transparent;
+      color: var(--g);
     }
 
     .hero-sub {
@@ -194,117 +189,11 @@
       font-weight: 600;
     }
 
-    /* ── trait strips ── */
-    .traits {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 36px;
-      opacity: 0;
-      animation: up 0.6s ease forwards 0.55s;
-    }
-    .trait {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,0.055);
-      border-radius: 16px;
-      padding: 14px 16px;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .trait:hover {
-      border-color: rgba(34,197,94,0.2);
-      transform: translateX(4px);
-    }
-    .trait-icon {
-      width: 38px; height: 38px;
-      border-radius: 12px;
-      background: rgba(34,197,94,0.1);
-      border: 1px solid rgba(34,197,94,0.15);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-    .trait-body {}
-    .trait-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.92);
-      margin-bottom: 2px;
-    }
-    .trait-desc {
-      font-size: 12.5px;
-      color: rgba(255,255,255,0.42);
-      line-height: 1.4;
-    }
-
-    /* ── steps ── */
-    .section-label {
-      font-family: 'Syne', sans-serif;
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.3);
-      margin-bottom: 16px;
-    }
-
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      margin-bottom: 40px;
-      opacity: 0;
-      animation: up 0.6s ease forwards 0.65s;
-    }
-    .step-row {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      position: relative;
-    }
-    .step-row:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      left: 17px;
-      top: 36px;
-      width: 2px;
-      height: calc(100% - 8px);
-      background: linear-gradient(to bottom, rgba(34,197,94,0.25), rgba(34,197,94,0.04));
-    }
-    .step-num {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(34,197,94,0.18), rgba(34,197,94,0.06));
-      border: 1.5px solid rgba(34,197,94,0.3);
-      color: var(--g);
-      font-family: 'Syne', sans-serif;
-      font-size: 14px;
-      font-weight: 800;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      z-index: 1;
-    }
-    .step-content {
-      padding: 6px 0 28px;
-    }
-    .step-title {
-      font-size: 14.5px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.9);
-      margin-bottom: 3px;
-    }
-    .step-desc {
-      font-size: 13px;
-      color: rgba(255,255,255,0.42);
-      line-height: 1.45;
-    }
-
-    /* ── CTA ── */
+    /* ── CTA (now above the fold) ── */
     .cta-section {
       opacity: 0;
-      animation: up 0.6s ease forwards 0.75s;
+      animation: up 0.6s ease forwards 0.55s;
+      margin-bottom: 36px;
     }
 
     .cta-top {
@@ -426,11 +315,141 @@
       font-size: 12px;
       color: rgba(255,255,255,0.25);
       margin-top: 6px;
-      margin-bottom: 40px;
     }
     .free-note span {
       color: var(--g);
       font-weight: 600;
+    }
+
+    /* ── divider ── */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 36px 0 28px;
+      opacity: 0;
+      animation: up 0.6s ease forwards 0.65s;
+    }
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+    }
+    .section-divider span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      white-space: nowrap;
+    }
+
+    /* ── traits ── */
+    .traits {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: up 0.6s ease forwards 0.75s;
+    }
+    .trait {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.055);
+      border-radius: 16px;
+      padding: 14px 16px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .trait:hover {
+      border-color: rgba(34,197,94,0.2);
+      transform: translateX(4px);
+    }
+    .trait-icon {
+      width: 38px; height: 38px;
+      border-radius: 12px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .trait-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.92);
+      margin-bottom: 2px;
+    }
+    .trait-desc {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.42);
+      line-height: 1.4;
+    }
+
+    /* ── steps ── */
+    .section-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 16px;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: up 0.6s ease forwards 0.85s;
+    }
+    .step-row {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      position: relative;
+    }
+    .step-row:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 17px;
+      top: 36px;
+      width: 2px;
+      height: calc(100% - 8px);
+      background: linear-gradient(to bottom, rgba(34,197,94,0.25), rgba(34,197,94,0.04));
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(34,197,94,0.18), rgba(34,197,94,0.06));
+      border: 1.5px solid rgba(34,197,94,0.3);
+      color: var(--g);
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    .step-content {
+      padding: 6px 0 28px;
+    }
+    .step-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 3px;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.42);
+      line-height: 1.45;
     }
 
     /* ── bottom wordmark ── */
@@ -451,13 +470,11 @@
       margin-top: 6px;
     }
 
-    /* ── keyframes ── */
     @keyframes up {
       from { opacity: 0; transform: translateY(18px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── ripple ── */
     .ripple {
       position: absolute;
       border-radius: 50%;
@@ -517,59 +534,7 @@
       </p>
     </div>
 
-    <!-- traits -->
-    <div class="traits">
-      <div class="trait">
-        <div class="trait-icon">🃏</div>
-        <div class="trait-body">
-          <div class="trait-title">Post a card, not a post</div>
-          <div class="trait-desc">A thought, a question, anything — it lives for 24 hours then disappears.</div>
-        </div>
-      </div>
-      <div class="trait">
-        <div class="trait-icon">🚫</div>
-        <div class="trait-body">
-          <div class="trait-title">No lurkers allowed</div>
-          <div class="trait-desc">You can only reply if you've posted. Everyone has skin in the game.</div>
-        </div>
-      </div>
-      <div class="trait">
-        <div class="trait-icon">💬</div>
-        <div class="trait-body">
-          <div class="trait-title">Real conversations</div>
-          <div class="trait-desc">No likes. No comments. Just one-on-one chats with people you'd never have met.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- steps -->
-    <div class="steps">
-      <div class="section-label">How it works</div>
-
-      <div class="step-row">
-        <div class="step-num">1</div>
-        <div class="step-content">
-          <div class="step-title">Drop a card</div>
-          <div class="step-desc">Write whatever's on your mind. It's yours — no one sees your name.</div>
-        </div>
-      </div>
-      <div class="step-row">
-        <div class="step-num">2</div>
-        <div class="step-content">
-          <div class="step-title">Someone real responds</div>
-          <div class="step-desc">They had to post too. So they're just as open as you are.</div>
-        </div>
-      </div>
-      <div class="step-row">
-        <div class="step-num">3</div>
-        <div class="step-content">
-          <div class="step-title">Keep the chat, make the friend</div>
-          <div class="step-desc">If it clicks, you both choose to reveal and keep talking. No pressure either way.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CTA -->
+    <!-- CTA — up top now -->
     <div class="cta-section">
       <div class="cta-top">
         <div class="cta-headline">Download Sküp free</div>
@@ -603,6 +568,63 @@
       <div class="free-note"><span>Free</span> · No ads · No algorithm</div>
     </div>
 
+    <!-- divider -->
+    <div class="section-divider">
+      <span>How it works</span>
+    </div>
+
+    <!-- traits -->
+    <div class="traits">
+      <div class="trait">
+        <div class="trait-icon">🃏</div>
+        <div class="trait-body">
+          <div class="trait-title">Post a card, not a post</div>
+          <div class="trait-desc">A thought, a question, anything — it lives for 24 hours then disappears.</div>
+        </div>
+      </div>
+      <div class="trait">
+        <div class="trait-icon">🚫</div>
+        <div class="trait-body">
+          <div class="trait-title">No lurkers allowed</div>
+          <div class="trait-desc">You can only reply if you've posted. Everyone has skin in the game.</div>
+        </div>
+      </div>
+      <div class="trait">
+        <div class="trait-icon">💬</div>
+        <div class="trait-body">
+          <div class="trait-title">Real conversations</div>
+          <div class="trait-desc">No likes. No comments. Just one-on-one chats with people you'd never have met.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- steps -->
+    <div class="steps">
+      <div class="section-label">Step by step</div>
+
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Drop a card</div>
+          <div class="step-desc">Write whatever's on your mind. It's yours — no one sees your name.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Someone real responds</div>
+          <div class="step-desc">They had to post too. So they're just as open as you are.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Keep the chat, make the friend</div>
+          <div class="step-desc">If it clicks, you both choose to reveal and keep talking. No pressure either way.</div>
+        </div>
+      </div>
+    </div>
+
     <div class="wordmark">
       <div class="wordmark-name">Sküp</div>
       <div class="footer-copy">© Sküp · Made for real ones</div>
@@ -611,7 +633,6 @@
   </div>
 
   <script>
-    // Platform detection — reorder & highlight relevant button
     const ua = navigator.userAgent.toLowerCase();
     const isIOS = /iphone|ipad|ipod/.test(ua);
     const btnAndroid = document.getElementById('btn-android');
@@ -623,7 +644,6 @@
       btnIOS.parentNode.insertBefore(btnIOS, btnAndroid);
     }
 
-    // Ripple on tap
     [btnAndroid, btnIOS].forEach(btn => {
       btn.addEventListener('pointerdown', function(e) {
         const r = this.getBoundingClientRect();
